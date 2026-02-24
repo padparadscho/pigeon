@@ -5,7 +5,10 @@ import Xmlb from 'gi://Xmlb';
 
 import { ImapClient } from './imap.js';
 
-async function fetchMessagesOAuth2(provider, { goaObject, cancellable, httpSession, settings, mailbox }) {
+async function fetchMessagesOAuth2(
+    provider,
+    { goaObject, cancellable, httpSession, settings, mailbox },
+) {
     const oauth2 = goaObject.get_oauth2_based();
     const [token] = await oauth2.call_get_access_token(cancellable);
 
@@ -22,8 +25,7 @@ async function fetchMessagesOAuth2(provider, { goaObject, cancellable, httpSessi
     );
 
     const status = request.get_status();
-    if (status !== 200)
-        throw new Error(`HTTP ${status}: ${request.get_reason_phrase()}`);
+    if (status !== 200) throw new Error(`HTTP ${status}: ${request.get_reason_phrase()}`);
 
     const body = new TextDecoder('utf-8').decode(bytes.get_data());
     return provider.parseResponse(body, mailbox);
@@ -37,10 +39,6 @@ const googleProvider = {
     getApiURL(priorityOnly) {
         const label = priorityOnly ? '%5Eiim' : '%5Ei';
         return `https://mail.google.com/mail/feed/atom/${label}`;
-    },
-
-    getFallbackURL() {
-        return 'https://mail.google.com';
     },
 
     parseResponse(body, mailbox) {
@@ -70,7 +68,7 @@ const googleProvider = {
                           'https://mail.google.com/mail',
                           `https://mail.google.com/mail/u/${mailbox}`,
                       )
-                    : null,
+                    : `https://mail.google.com/mail/u/${mailbox}`,
             };
         });
     },
@@ -88,10 +86,6 @@ const microsoftProvider = {
         return `https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messages?$filter=${filter}&$select=from,subject,webLink,id`;
     },
 
-    getFallbackURL() {
-        return 'https://outlook.live.com';
-    },
-
     parseResponse(body) {
         const data = JSON.parse(body);
         return (data.value || []).map((msg) => {
@@ -100,7 +94,7 @@ const microsoftProvider = {
                 id: msg.id,
                 subject: msg.subject || '',
                 from: addr ? `${addr.name} <${addr.address}>` : '',
-                link: msg.webLink,
+                link: msg.webLink || 'https://outlook.live.com',
             };
         });
     },
@@ -109,10 +103,8 @@ const microsoftProvider = {
 const imapProvider = {
     async fetchMessages({ goaObject, cancellable, logger }) {
         const mail = goaObject.get_mail();
-        if (!mail)
-            throw new Error('IMAP account does not have Mail interface');
-        if (!mail.imap_host)
-            throw new Error('IMAP account is missing imap_host configuration');
+        if (!mail) throw new Error('IMAP account does not have Mail interface');
+        if (!mail.imap_host) throw new Error('IMAP account is missing imap_host configuration');
         if (!mail.imap_use_ssl && !mail.imap_use_tls)
             throw new Error('IMAP requires SSL/TLS or STARTTLS');
 
@@ -123,13 +115,9 @@ const imapProvider = {
         const username = mail.imap_user_name || mail.email_address;
 
         const passwordBased = goaObject.get_password_based();
-        if (!passwordBased)
-            throw new Error('IMAP account does not have password');
+        if (!passwordBased) throw new Error('IMAP account does not have password');
 
-        const [password] = await passwordBased.call_get_password(
-            'imap-password',
-            cancellable,
-        );
+        const [password] = await passwordBased.call_get_password('imap-password', cancellable);
 
         const client = new ImapClient({
             host,
@@ -150,10 +138,6 @@ const imapProvider = {
         } finally {
             await client.logout();
         }
-    },
-
-    getFallbackURL() {
-        return null;
     },
 };
 

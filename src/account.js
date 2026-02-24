@@ -115,10 +115,9 @@ export class Account {
     }
 
     _openEmail(link) {
-        const url = link || this._provider.getFallbackURL();
         const useMailClient = this._settings.get_boolean('use-mail-client');
 
-        if (!url || useMailClient) {
+        if (!link || useMailClient) {
             const mailto = Gio.app_info_get_default_for_uri_scheme('mailto');
             if (mailto) {
                 mailto.launch([], null);
@@ -126,8 +125,8 @@ export class Account {
             }
         }
 
-        if (url) {
-            Gio.AppInfo.launch_default_for_uri(url, null);
+        if (link) {
+            Gio.AppInfo.launch_default_for_uri(link, null);
         }
     }
 }
