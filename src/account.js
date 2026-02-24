@@ -1,6 +1,4 @@
 import Gio from 'gi://Gio';
-import GLib from 'gi://GLib';
-import Soup from 'gi://Soup';
 import { gettext as _ } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as MessageTray from 'resource:///org/gnome/shell/ui/messageTray.js';
@@ -18,8 +16,7 @@ export class Account {
 
         const account = goaAccount.get_account();
         this.mailbox = account.presentation_identity;
-        this._providerType = account.provider_type;
-        this._provider = providers[this._providerType];
+        this._provider = providers[account.provider_type];
         this._source = null;
         this._failCount = 0;
     }
@@ -48,47 +45,14 @@ export class Account {
     }
 
     async _fetchMessages() {
-        if (this._providerType === 'imap_smtp') {
-            return await this._fetchMessagesIMAP();
-        }
-        return await this._fetchMessagesOAuth2();
-    }
-
-    async _fetchMessagesOAuth2() {
-        const token = await this._getAccessToken();
-        const priorityOnly = this._settings.get_boolean('priority-only');
-        const url = this._provider.getApiURL(priorityOnly);
-
-        const request = Soup.Message.new('GET', url);
-        request.request_headers.append('Authorization', `Bearer ${token}`);
-
-        const bytes = await this._httpSession.send_and_read_async(
-            request,
-            GLib.PRIORITY_DEFAULT,
-            this._cancellable,
-        );
-
-        const status = request.get_status();
-        if (status !== 200) {
-            throw new Error(`HTTP ${status}: ${request.get_reason_phrase()}`);
-        }
-
-        const body = new TextDecoder('utf-8').decode(bytes.get_data());
-        return this._provider.parseResponse(body, this.mailbox);
-    }
-
-    async _fetchMessagesIMAP() {
         return await this._provider.fetchMessages({
             goaObject: this.goaAccount,
             cancellable: this._cancellable,
+            httpSession: this._httpSession,
+            settings: this._settings,
             logger: this._logger,
+            mailbox: this.mailbox,
         });
-    }
-
-    async _getAccessToken() {
-        const oauth2 = this.goaAccount.get_oauth2_based();
-        const [accessToken] = await oauth2.call_get_access_token(this._cancellable);
-        return accessToken;
     }
 
     _processNewMessages(messages) {

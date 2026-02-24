@@ -1,8 +1,39 @@
+import Gio from 'gi://Gio';
+import GLib from 'gi://GLib';
+import Soup from 'gi://Soup';
 import Xmlb from 'gi://Xmlb';
 
 import { ImapClient } from './imap.js';
 
+async function fetchMessagesOAuth2(provider, { goaObject, cancellable, httpSession, settings, mailbox }) {
+    const oauth2 = goaObject.get_oauth2_based();
+    const [token] = await oauth2.call_get_access_token(cancellable);
+
+    const priorityOnly = settings.get_boolean('priority-only');
+    const url = provider.getApiURL(priorityOnly);
+
+    const request = Soup.Message.new('GET', url);
+    request.request_headers.append('Authorization', `Bearer ${token}`);
+
+    const bytes = await httpSession.send_and_read_async(
+        request,
+        GLib.PRIORITY_DEFAULT,
+        cancellable,
+    );
+
+    const status = request.get_status();
+    if (status !== 200)
+        throw new Error(`HTTP ${status}: ${request.get_reason_phrase()}`);
+
+    const body = new TextDecoder('utf-8').decode(bytes.get_data());
+    return provider.parseResponse(body, mailbox);
+}
+
 const googleProvider = {
+    async fetchMessages(params) {
+        return await fetchMessagesOAuth2(this, params);
+    },
+
     getApiURL(priorityOnly) {
         const label = priorityOnly ? '%5Eiim' : '%5Ei';
         return `https://mail.google.com/mail/feed/atom/${label}`;
@@ -46,6 +77,10 @@ const googleProvider = {
 };
 
 const microsoftProvider = {
+    async fetchMessages(params) {
+        return await fetchMessagesOAuth2(this, params);
+    },
+
     getApiURL(priorityOnly) {
         const filter = priorityOnly
             ? "isRead eq false and inferenceClassification eq 'focused'"
