@@ -72,7 +72,7 @@ const googleProvider = {
             const href = entry.query_attr('link', 'href');
             return {
                 id: text('id'),
-                subject: text('title') || '(No subject)',
+                subject: text('title'),
                 from: `${text('author/name') || ''} <${text('author/email') || ''}>`,
                 link: href
                     ? href.replace(
@@ -107,7 +107,7 @@ const microsoftProvider = {
             const addr = msg.from?.emailAddress;
             return {
                 id: msg.id,
-                subject: msg.subject || '(No subject)',
+                subject: msg.subject,
                 from: addr ? `${addr.name} <${addr.address}>` : '',
                 link: msg.webLink || this.getInboxURL(),
             };

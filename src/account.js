@@ -98,7 +98,7 @@ export class Account {
         const persistent = this._settings.get_boolean('persistent-notifications');
         const notification = new MessageTray.Notification({
             source,
-            title: msg.subject,
+            title: msg.subject || _('(No subject)'),
             body: msg.from,
             iconName: 'mail-unread',
             urgency: persistent ? MessageTray.Urgency.CRITICAL : MessageTray.Urgency.NORMAL,

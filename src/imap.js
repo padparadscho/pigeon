@@ -218,7 +218,7 @@ export class ImapClient {
 
         return {
             id: messageIdMatch ? messageIdMatch[1] : `uid_${uid}`,
-            subject: this._decodeMime(subjectMatch ? subjectMatch[1].trim() : '(No subject)'),
+            subject: subjectMatch ? this._decodeMime(subjectMatch[1].trim()) : null,
             from: this._decodeMime(fromMatch ? fromMatch[1].trim() : '(Unknown sender)'),
             link: null,
         };
