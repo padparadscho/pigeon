@@ -1,0 +1,106 @@
+# Spanish translations for pigeon@subz69.github package.
+# Copyright (C) 2026 THE pigeon@subz69.github'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the pigeon@subz69.github package.
+# Padparadscho, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pigeon@subz69.github\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-23 01:13-0300\n"
+"PO-Revision-Date: 2026-03-23 01:13-0300\n"
+"Last-Translator: [Padparadscho] <contact@padparadscho.com>\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: src/account.js
+#, javascript-format
+msgid "Unable to check emails: %s"
+msgstr "No se pudieron comprobar los correos: %s"
+
+#: src/account.js
+#, javascript-format
+msgid "You have %d unread email"
+msgid_plural "You have %d unread emails"
+msgstr[0] "Tienes %d correo sin leer"
+msgstr[1] "Tienes %d correos sin leer"
+
+#: src/account.js
+msgid "(No subject)"
+msgstr "(Sin asunto)"
+
+#: src/manager.js
+msgid "Error loading email accounts"
+msgstr "Error al cargar las cuentas de correo"
+
+#: src/prefs.js
+msgid "Notifications"
+msgstr "Notificaciones"
+
+#: src/prefs.js
+msgid "Configure notification behavior"
+msgstr "Configurar el comportamiento de las notificaciones"
+
+#: src/prefs.js
+msgid "Priority only"
+msgstr "Solo prioritarios"
+
+#: src/prefs.js
+msgid "Only notify for important emails"
+msgstr "Notificar solo los correos importantes"
+
+#: src/prefs.js
+msgid "Check interval"
+msgstr "Intervalo de verificación"
+
+#: src/prefs.js
+msgid "Time in seconds between email checks"
+msgstr "Tiempo en segundos entre verificaciones de correo"
+
+#: src/prefs.js
+msgid "Group notifications"
+msgstr "Agrupar notificaciones"
+
+#: src/prefs.js
+msgid ""
+"Show a summary instead of individual notifications when exceeding this count "
+"(0 to disable)"
+msgstr ""
+"Mostrar un resumen en lugar de notificaciones individuales al superar esta cantidad "
+"(0 para desactivar)"
+
+#: src/prefs.js
+msgid "Play sound"
+msgstr "Reproducir sonido"
+
+#: src/prefs.js
+msgid "Play a notification sound when new emails arrive"
+msgstr "Reproducir un sonido de notificación cuando lleguen correos nuevos"
+
+#: src/prefs.js
+msgid "Persistent notifications"
+msgstr "Notificaciones persistentes"
+
+#: src/prefs.js
+msgid "Keep notifications visible until dismissed"
+msgstr "Mantener las notificaciones visibles hasta que se descarten"
+
+#: src/prefs.js
+msgid "Email Client"
+msgstr "Cliente de correo"
+
+#: src/prefs.js
+msgid "Configure how to open emails"
+msgstr "Configurar cómo abrir los correos"
+
+#: src/prefs.js
+msgid "Use default email client"
+msgstr "Usar el cliente de correo predeterminado"
+
+#: src/prefs.js
+msgid "Launch mail client when clicking notifications"
+msgstr "Abrir el cliente de correo al pulsar las notificaciones"
